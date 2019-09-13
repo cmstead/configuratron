@@ -1,0 +1,41 @@
+{
+    "name": "configuratron",
+    "version": "1.0.0",
+    "description": "A configuration read/writer and in-app manager for CLI applications",
+    "main": "index.js",
+    "scripts": {
+        "test": "nanocommit"
+    },
+    "keywords": [
+        "configuration",
+        "cli",
+        "cli",
+        "tooling",
+        "configuration",
+        "repository"
+    ],
+    "author": "Chris Stead",
+    "license": "MPL-2.0",
+    "devDependencies": {
+        "chai": "^4.2.0",
+        "chai-verify": "^1.3.0",
+        "mocha": "^6.2.0",
+        "nanocommit": "^1.12.0",
+        "sinon": "^7.4.2"
+    },
+    "nanocommit": {
+        "testCommand": "node ./node_modules/mocha/bin/mocha ./test/**/*.test.js",
+        "blindCommit": true,
+        "annotations": "nanocommit",
+        "watchFiles": [
+            "./test/**/*.test.js",
+            "./app/**/*.js"
+        ],
+        "defaultCommandArgs": null,
+        "commitMessage": null,
+        "customAnnotations": null
+    },
+    "dependencies": {
+        "dject": "^1.14.2"
+    }
+}
