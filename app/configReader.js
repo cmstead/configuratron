@@ -8,15 +8,19 @@ function configReader(fs) {
         }
     }
 
+    function getFilePathFromOption(currentFilePathOption) {
+        return typeof currentFilePathOption === 'string'
+            ? currentFilePathOption
+            : currentFilePathOption.path;
+    }
+
     function getConfigurationString(filePaths) {
         let configurationString = null;
         let filePathsCopy = filePaths.slice(0);
 
         while (configurationString === null && filePathsCopy.length > 0) {
             const currentFilePathOption = filePathsCopy.shift();
-            const currentFilePath = typeof currentFilePathOption === 'string'
-                ? currentFilePathOption
-                : currentFilePathOption.path;
+            const currentFilePath = getFilePathFromOption(currentFilePathOption);
 
             configurationString = readFileOrNull(currentFilePath);
         }
@@ -27,7 +31,7 @@ function configReader(fs) {
     function read(filePaths) {
         let configurationString = getConfigurationString(filePaths);
 
-        if(configurationString === null) {
+        if (configurationString === null) {
             throw new Error('Unable to locate configuration file');
         } else {
             return JSON.parse(configurationString);
