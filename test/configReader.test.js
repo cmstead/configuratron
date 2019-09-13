@@ -37,4 +37,22 @@ describe("Config Reader", function () {
         assert.verify(capturedConfig, expectedConfig);
     });
 
+    it('reads next file path in paths array if first fails', function () {
+        const expectedConfig = { test: 'config' };
+        const filePaths = ['myconfig.json', 'backupConfig.json'];
+
+        fakeFs.readFileSync = sinon.spy(function (filePath) {
+            if(filePath === filePaths[0]) {
+                throw new Error('Boom!');
+            } else {
+                return JSON.stringify(expectedConfig);
+            }
+        });
+
+        const capturedConfig = configReader.read(filePaths);
+
+        assert.equal(fakeFs.readFileSync.getCall(0).args[0], filePaths[0]);
+        assert.equal(fakeFs.readFileSync.getCall(1).args[0], filePaths[1]);
+    });
+
 });
