@@ -1,17 +1,21 @@
 function configReader(fs) {
 
+    function readFileOrNull(filePath) {
+        try {
+            return fs.readFileSync(filePath, { encoding: 'utf8' });
+        } catch (e) {
+            return null;
+        }
+    }
+
     function getConfigurationString(filePaths) {
         let configurationString = null;
         let filePathsCopy = filePaths.slice(0);
 
         while (configurationString === null && filePathsCopy.length > 0) {
-            const filePath = filePathsCopy.shift();
+            const currentFilePath = filePathsCopy.shift();
 
-            try {
-                configurationString = fs.readFileSync(filePath, { encoding: 'utf8' });
-            } catch (e) {
-                // continue
-            }
+            configurationString = readFileOrNull(currentFilePath);
         }
 
         return configurationString;
