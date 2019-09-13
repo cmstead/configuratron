@@ -68,6 +68,26 @@ describe("Config Reader", function () {
         assert.equal(fakeFs.readFileSync.getCall(0).args[0], filePaths[0].path);
     });
 
+    it('supports optional source parser', function () {
+        const expectedConfig = { test: 'config' };
+        const filePaths = [{
+            path: 'myconfig.json',
+            parser: function (configString) {
+                const config = JSON.parse(configString);
+
+                return config.test;
+            }
+        }];
+
+        fakeFs.readFileSync = sinon.spy(function (filePath) {
+            return JSON.stringify(expectedConfig);
+        });
+
+        const configData = configReader.read(filePaths);
+
+        assert.equal(configData, expectedConfig.test);
+    });
+
     it('throws an error if no file can be read', function () {
         const filePaths = ['myconfig.json', 'backupConfig.json'];
 
