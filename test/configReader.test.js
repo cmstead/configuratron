@@ -42,7 +42,7 @@ describe("Config Reader", function () {
         const filePaths = ['myconfig.json', 'backupConfig.json'];
 
         fakeFs.readFileSync = sinon.spy(function (filePath) {
-            if(filePath === filePaths[0]) {
+            if (filePath === filePaths[0]) {
                 throw new Error('Boom!');
             } else {
                 return JSON.stringify(expectedConfig);
@@ -53,6 +53,19 @@ describe("Config Reader", function () {
 
         assert.equal(fakeFs.readFileSync.getCall(0).args[0], filePaths[0]);
         assert.equal(fakeFs.readFileSync.getCall(1).args[0], filePaths[1]);
+    });
+
+    it('supports file path object', function () {
+        const expectedConfig = { test: 'config' };
+        const filePaths = [{ path: 'myconfig.json' }];
+
+        fakeFs.readFileSync = sinon.spy(function (filePath) {
+            return JSON.stringify(expectedConfig);
+        });
+
+        configReader.read(filePaths);
+
+        assert.equal(fakeFs.readFileSync.getCall(0).args[0], filePaths[0].path);
     });
 
     it('throws an error if no file can be read', function () {

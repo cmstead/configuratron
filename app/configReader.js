@@ -13,7 +13,10 @@ function configReader(fs) {
         let filePathsCopy = filePaths.slice(0);
 
         while (configurationString === null && filePathsCopy.length > 0) {
-            const currentFilePath = filePathsCopy.shift();
+            const currentFilePathOption = filePathsCopy.shift();
+            const currentFilePath = typeof currentFilePathOption === 'string'
+                ? currentFilePathOption
+                : currentFilePathOption.path;
 
             configurationString = readFileOrNull(currentFilePath);
         }
