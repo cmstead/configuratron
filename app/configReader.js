@@ -19,8 +19,10 @@ function configReader(fs) {
     }
 
     function getConfigParser(filePathOption) {
-        return typeof filePathOption === 'string'
-            || typeof filePathOption.parser !== 'function'
+        const optionHasNoParser = typeof filePathOption === 'string'
+            || typeof filePathOption.parser !== 'function';
+
+        return optionHasNoParser
             ? defaultParser
             : filePathOption.parser;
     }
