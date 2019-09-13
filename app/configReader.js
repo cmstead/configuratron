@@ -24,7 +24,11 @@ function configReader(fs) {
     function read(filePaths) {
         let configurationString = getConfigurationString(filePaths);
 
-        return JSON.parse(configurationString);
+        if(configurationString === null) {
+            throw new Error('Unable to locate configuration file');
+        } else {
+            return JSON.parse(configurationString);
+        }
     }
 
     return {
