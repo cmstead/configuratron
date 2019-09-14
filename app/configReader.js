@@ -36,17 +36,21 @@ function configReader(fs) {
         };
     }
 
-    function readConfigFile(filePath) {
-        return fs.readFileSync(filePath, { encoding: 'utf8' });
+    function readConfigFile(pathOption) {
+        return pathOption !== null
+            ? fs.readFileSync(pathOption.path, { encoding: 'utf8' })
+            : null;
     }
 
     function parseConfiguration(pathOption, configurationString) {
-        return pathOption.parser(configurationString);
+        return isString(configurationString)
+            ? pathOption.parser(configurationString)
+            : null;
     }
 
     function getConfigurationPathOption(filePaths) {
         let normalizedPathOptions = filePaths.map(normalizeFileOption);
-        let lastPathOption;
+        let lastPathOption = null;
 
         while (normalizedPathOptions.length > 0) {
             const pathOption = normalizedPathOptions.shift();
@@ -62,11 +66,9 @@ function configReader(fs) {
 
     function getConfigurationString(filePaths) {
         const pathOption = getConfigurationPathOption(filePaths);
-        const configurationString = readConfigFile(pathOption.path);
+        const configurationString = readConfigFile(pathOption);
 
-        return isString(configurationString)
-            ? parseConfiguration(pathOption, configurationString)
-            : null;
+        return parseConfiguration(pathOption, configurationString);
     }
 
     function read(filePaths) {
