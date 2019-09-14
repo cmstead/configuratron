@@ -23,11 +23,7 @@ function configReader(
     }
 
     function getLastPathOption(lastPathOption, pathOption) {
-        const fileExists = doesFileExist(pathOption);
-
-        return fileExists
-            ? pathOption
-            : lastPathOption;
+        return doesFileExist(pathOption) ? pathOption : lastPathOption;
     }
 
     function getConfigurationPathOption(pathOptions) {
