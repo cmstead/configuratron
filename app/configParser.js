@@ -1,11 +1,11 @@
-function configHydrator(
+function configParser(
     fs,
     typeHelper
 ) {
 
     const { isNull, isString } = typeHelper;
 
-    function readConfigFileFromDisk(fs, pathOption) {
+    function readConfigFileFromDisk(pathOption) {
         try {
             return fs.readFileSync(pathOption.path, { encoding: 'utf8' });
         } catch (e) {
@@ -15,7 +15,7 @@ function configHydrator(
 
     function readConfigFile(pathOption) {
         return !isNull(pathOption)
-            ? readConfigFileFromDisk(fs, pathOption)
+            ? readConfigFileFromDisk(pathOption)
             : null;
     }
 
@@ -36,4 +36,4 @@ function configHydrator(
     };
 }
 
-module.exports = configHydrator;
+module.exports = configParser;

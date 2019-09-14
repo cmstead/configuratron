@@ -1,5 +1,5 @@
 function configReader(
-    configHydrator,
+    configParser,
     configLocator,
     pathOptionNormalizer,
     typeHelper
@@ -7,9 +7,8 @@ function configReader(
 
     const { isNull } = typeHelper;
     const { normalizePathOptions } = pathOptionNormalizer;
-    const { readAndParseConfiguration } = configHydrator;
+    const { readAndParseConfiguration } = configParser;
     const {getConfigurationPathOption} = configLocator;
-
 
     function getConfigurationString(filePaths) {
         const pathOptions = normalizePathOptions(filePaths);
