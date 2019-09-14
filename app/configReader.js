@@ -9,7 +9,7 @@ function configReader(fs) {
     }
 
     function getFilePathFromOption(currentFilePathOption) {
-        return typeof currentFilePathOption === 'string'
+        return isString(currentFilePathOption)
             ? currentFilePathOption
             : currentFilePathOption.path;
     }
@@ -19,8 +19,8 @@ function configReader(fs) {
     }
 
     function getConfigParser(filePathOption) {
-        const optionHasNoParser = typeof filePathOption === 'string'
-            || typeof filePathOption.parser !== 'function';
+        const optionHasNoParser = isString(filePathOption)
+            || !isFunction(filePathOption.parser);
 
         return optionHasNoParser
             ? defaultParser
@@ -30,7 +30,7 @@ function configReader(fs) {
     function parseConfiguration(pathOption, configurationString) {
         const parse = pathOption.parser;
 
-        return typeof configurationString === 'string'
+        return isString(configurationString)
             ? parse(configurationString)
             : null;
     }
@@ -41,6 +41,15 @@ function configReader(fs) {
             parser: getConfigParser(fileOption)
         };
     }
+
+    function isType(typeString) {
+        return function (value) {
+            return typeof value === typeString;
+        }
+    }
+
+    const isString = isType('string');
+    const isFunction = isType('function');
 
     function getConfigurationString(filePaths) {
         let normalizedPathOptions = filePaths.map(normalizeFileOption);
@@ -56,7 +65,9 @@ function configReader(fs) {
 
         const configurationString = readFileOrNull(lastPathOption.path);
 
-        return parseConfiguration(lastPathOption, configurationString);
+        return isString(configurationString)
+            ? parseConfiguration(lastPathOption, configurationString)
+            : null;
     }
 
     function read(filePaths) {
