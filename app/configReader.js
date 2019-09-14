@@ -6,9 +6,17 @@ function configReader(
 
     const { isString, isNull } = typeHelper;
 
+    function readConfigFileFromDisk(fs, pathOption) {
+        try {
+            return fs.readFileSync(pathOption.path, { encoding: 'utf8' });
+        } catch (e) {
+            return {};
+        }
+    }
+
     function readConfigFile(pathOption) {
         return !isNull(pathOption)
-            ? fs.readFileSync(pathOption.path, { encoding: 'utf8' })
+            ? readConfigFileFromDisk(fs, pathOption)
             : null;
     }
 

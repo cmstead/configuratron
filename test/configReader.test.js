@@ -103,4 +103,15 @@ describe("Config Reader", function () {
         assert.verify(returnedConfig, {});
     });
 
+    it('returns an empty object when config read throws an error', function () {
+        const filePaths = ['myconfig.json', 'backupConfig.json'];
+
+        fakeFs.existsSync = () => true;
+        fakeFs.readFileSync = () => { throw new Error('Blammo!'); };
+
+        const returnedConfig = configReader.read(filePaths);
+
+        assert.verify(returnedConfig, {});
+    });
+
 });
