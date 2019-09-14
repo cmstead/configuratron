@@ -48,12 +48,16 @@ function configReader(fs) {
             : null;
     }
 
+    function normalizeFilePathOptions(filePaths) {
+        return filePaths.map(normalizeFileOption);
+    }
+
     function getConfigurationPathOption(filePaths) {
-        let normalizedPathOptions = filePaths.map(normalizeFileOption);
+        let normalizedPathOptions = normalizeFilePathOptions(filePaths);
         let lastPathOption = null;
 
-        while (normalizedPathOptions.length > 0) {
-            const pathOption = normalizedPathOptions.shift();
+        for (let i = 0; i < normalizedPathOptions.length; i++) {
+            const pathOption = normalizedPathOptions[i];
 
             if (fs.existsSync(pathOption.path)) {
                 lastPathOption = pathOption;
