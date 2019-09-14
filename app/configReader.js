@@ -1,11 +1,7 @@
 function configReader(fs) {
 
     function readFileOrNull(filePath) {
-        try {
-            return fs.readFileSync(filePath, { encoding: 'utf8' });
-        } catch (e) {
-            return null;
-        }
+        return fs.readFileSync(filePath, { encoding: 'utf8' });
     }
 
     function getFilePathFromOption(currentFilePathOption) {
@@ -30,9 +26,7 @@ function configReader(fs) {
     function parseConfiguration(pathOption, configurationString) {
         const parse = pathOption.parser;
 
-        return isString(configurationString)
-            ? parse(configurationString)
-            : null;
+        return parse(configurationString);
     }
 
     function normalizeFileOption(fileOption) {
