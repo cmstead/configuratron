@@ -71,11 +71,10 @@ function configReader(
     }
 
     function read(filePaths) {
-        let configurationData = getConfigurationString(filePaths);
+        const configurationData = getConfigurationString(filePaths);
+        const configurationWasRead = configurationData !== null;
 
-        return configurationData !== null
-            ? configurationData
-            : {};
+        return configurationWasRead ? configurationData : {};
     }
 
     return {
