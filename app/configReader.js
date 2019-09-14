@@ -1,14 +1,16 @@
 function configReader(
-    configParser,
+    configFileReader,
     configLocator,
+    configParser,
     pathOptionNormalizer,
     typeHelper
 ) {
 
     const { isNull } = typeHelper;
+    const { locatePathOption } = configLocator;
     const { normalizePathOptions } = pathOptionNormalizer;
     const { readAndParseConfiguration } = configParser;
-    const { locatePathOption } = configLocator;
+    const { readConfigFile } = configFileReader;
 
     function getPathOption(filePaths) {
         const pathOptions = normalizePathOptions(filePaths);
@@ -17,7 +19,8 @@ function configReader(
 
     function read(filePaths) {
         const pathOption = getPathOption(filePaths);
-        const configurationData = readAndParseConfiguration(pathOption);
+        const configString = readConfigFile(pathOption);
+        const configurationData = readAndParseConfiguration(configString, pathOption);
         const configurationWasRead = !isNull(configurationData);
 
         return configurationWasRead ? configurationData : {};
