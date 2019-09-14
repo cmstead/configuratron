@@ -1,31 +1,13 @@
 function configReader(
+    configHydrator,
     fs,
     pathOptionNormalizer,
     typeHelper
 ) {
 
-    const { isString, isNull } = typeHelper;
+    const { isNull } = typeHelper;
     const { normalizePathOptions } = pathOptionNormalizer;
-
-    function readConfigFileFromDisk(fs, pathOption) {
-        try {
-            return fs.readFileSync(pathOption.path, { encoding: 'utf8' });
-        } catch (e) {
-            return {};
-        }
-    }
-
-    function readConfigFile(pathOption) {
-        return !isNull(pathOption)
-            ? readConfigFileFromDisk(fs, pathOption)
-            : null;
-    }
-
-    function parseConfiguration(pathOption, configurationString) {
-        return isString(configurationString)
-            ? pathOption.parser(configurationString)
-            : null;
-    }
+    const { readAndParseConfiguration } = configHydrator;
 
     function doesFileExist(pathOption) {
         return fs.existsSync(pathOption.path);
@@ -45,12 +27,6 @@ function configReader(
         });
 
         return lastPathOption;
-    }
-
-    function readAndParseConfiguration(pathOption) {
-        const configString = readConfigFile(pathOption);
-
-        return parseConfiguration(pathOption, configString);
     }
 
     function getConfigurationString(filePaths) {
