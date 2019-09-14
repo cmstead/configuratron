@@ -8,17 +8,16 @@ function configReader(
     const { isNull } = typeHelper;
     const { normalizePathOptions } = pathOptionNormalizer;
     const { readAndParseConfiguration } = configParser;
-    const {getConfigurationPathOption} = configLocator;
+    const { locatePathOption } = configLocator;
 
-    function getConfigurationString(filePaths) {
+    function getPathOption(filePaths) {
         const pathOptions = normalizePathOptions(filePaths);
-        const pathOption = getConfigurationPathOption(pathOptions);
-
-        return readAndParseConfiguration(pathOption);
+        return locatePathOption(pathOptions);
     }
 
     function read(filePaths) {
-        const configurationData = getConfigurationString(filePaths);
+        const pathOption = getPathOption(filePaths);
+        const configurationData = readAndParseConfiguration(pathOption);
         const configurationWasRead = !isNull(configurationData);
 
         return configurationWasRead ? configurationData : {};

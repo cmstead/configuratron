@@ -15,7 +15,7 @@ function configLocator (
             : lastPathOption;
     }
 
-    function getConfigurationPathOption(pathOptions) {
+    function locatePathOption(pathOptions) {
         let lastPathOption = null;
 
         pathOptions.forEach(function (pathOption) {
@@ -26,7 +26,7 @@ function configLocator (
     }
 
     return {
-        getConfigurationPathOption
+        locatePathOption
     };
 }
 
