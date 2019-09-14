@@ -2,6 +2,7 @@ const chai = require('chai');
 const chaiVerify = require('chai-verify');
 const container = require('../container');
 const sinon = require('sinon');
+const path = require('path');
 
 chai.use(chaiVerify);
 
@@ -20,7 +21,13 @@ describe("Config Reader", function () {
             existsSync: () => true
         };
 
+        fakeProcess = {
+            cwd: () => '',
+        };
+
         childContainer.register(() => fakeFs, 'fs');
+        childContainer.register(() => fakeProcess, 'process');
+
         configReader = childContainer.build('configReader');
     });
 
@@ -37,6 +44,19 @@ describe("Config Reader", function () {
         assert.equal(fakeFs.readFileSync.getCall(0).args[1].encoding, 'utf8');
 
         assert.verify(capturedConfig, expectedConfig);
+    });
+
+    it('add current working directory to path for reading', function () {
+        const expectedConfig = { test: 'config' };
+        const filePaths = ['myconfig.json'];
+
+        fakeFs.readFileSync = sinon.spy(() => JSON.stringify(expectedConfig));
+        fakeProcess.cwd = () => 'foo';
+
+        configReader.read(filePaths);
+
+        const expectedPath = path.join(fakeProcess.cwd(), filePaths[0]);
+        assert.equal(fakeFs.readFileSync.getCall(0).args[0], expectedPath);
     });
 
     it('reads next file path in paths array if first fails', function () {

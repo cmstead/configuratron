@@ -1,4 +1,6 @@
 function pathOptionNormalizer (
+    path,
+    process,
     typeHelper
 ) {
     
@@ -24,8 +26,10 @@ function pathOptionNormalizer (
     }
 
     function normalizePathOption(fileOption) {
+        const optionPath = getFilePathFromOption(fileOption);
+
         return {
-            path: getFilePathFromOption(fileOption),
+            path: path.join(process.cwd(), optionPath),
             parser: getConfigParser(fileOption)
         };
     }
