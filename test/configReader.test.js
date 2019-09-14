@@ -92,15 +92,15 @@ describe("Config Reader", function () {
         assert.equal(configData, expectedConfig.test);
     });
 
-    it('throws an error if no file can be read', function () {
+    it('returns an empty object when a config file cannot be read', function () {
         const filePaths = ['myconfig.json', 'backupConfig.json'];
 
         fakeFs.existsSync = () => false;
-        fakeFs.readFileSync = sinon.spy(function (filePath) {
-            throw new Error('Boom!');
-        });
+        fakeFs.readFileSync = () => null;
 
-        assert.throws(() => configReader.read(filePaths), 'Unable to locate configuration file');
+        const returnedConfig = configReader.read(filePaths);
+
+        assert.verify(returnedConfig, {});
     });
 
 });

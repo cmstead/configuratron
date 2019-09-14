@@ -73,11 +73,9 @@ function configReader(
     function read(filePaths) {
         let configurationData = getConfigurationString(filePaths);
 
-        if (configurationData === null) {
-            throw new Error('Unable to locate configuration file');
-        } else {
-            return configurationData;
-        }
+        return configurationData !== null
+            ? configurationData
+            : {};
     }
 
     return {
