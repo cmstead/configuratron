@@ -1,5 +1,6 @@
 function configReader(
     fs,
+    pathOptionNormalizer,
     typeHelper
 ) {
 
@@ -31,6 +32,10 @@ function configReader(
         };
     }
 
+    function normalizePathOptions(filePaths) {
+        return filePaths.map(normalizePathOption);
+    }
+
     function readConfigFile(pathOption) {
         return pathOption !== null
             ? fs.readFileSync(pathOption.path, { encoding: 'utf8' })
@@ -43,12 +48,8 @@ function configReader(
             : null;
     }
 
-    function normalizePathOptions(filePaths) {
-        return filePaths.map(normalizePathOption);
-    }
-
     function getConfigurationPathOption(filePaths) {
-        let normalizedPathOptions = normalizePathOptions(filePaths);
+        let normalizedPathOptions = pathOptionNormalizer.normalizePathOptions(filePaths);
         let lastPathOption = null;
 
         for (let i = 0; i < normalizedPathOptions.length; i++) {
