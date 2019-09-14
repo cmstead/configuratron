@@ -1,6 +1,6 @@
 function configReader(
     configHydrator,
-    fs,
+    configLocator,
     pathOptionNormalizer,
     typeHelper
 ) {
@@ -8,26 +8,8 @@ function configReader(
     const { isNull } = typeHelper;
     const { normalizePathOptions } = pathOptionNormalizer;
     const { readAndParseConfiguration } = configHydrator;
+    const {getConfigurationPathOption} = configLocator;
 
-    function doesFileExist(pathOption) {
-        return fs.existsSync(pathOption.path);
-    }
-
-    function getLastPathOption(lastPathOption, pathOption) {
-        return isNull(lastPathOption) && doesFileExist(pathOption)
-            ? pathOption
-            : lastPathOption;
-    }
-
-    function getConfigurationPathOption(pathOptions) {
-        let lastPathOption = null;
-
-        pathOptions.forEach(function (pathOption) {
-            lastPathOption = getLastPathOption(lastPathOption, pathOption);
-        });
-
-        return lastPathOption;
-    }
 
     function getConfigurationString(filePaths) {
         const pathOptions = normalizePathOptions(filePaths);
