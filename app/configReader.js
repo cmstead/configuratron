@@ -1,14 +1,9 @@
-function configReader(fs) {
+function configReader(
+    fs,
+    typeHelper
+) {
 
-    function isTypeOf(typeString) {
-        return function (value) {
-            return typeof value === typeString;
-        }
-    }
-
-    const isString = isTypeOf('string');
-    const isFunction = isTypeOf('function');
-
+    const { isString, isFunction } = typeHelper;
 
     function defaultParser(configString) {
         return JSON.parse(configString);
