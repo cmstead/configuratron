@@ -20,7 +20,7 @@
         "chai": "^4.2.0",
         "chai-verify": "^1.3.0",
         "mocha": "^6.2.0",
-        "nanocommit": "^1.12.0",
+        "nanocommit": "^1.13.0",
         "sinon": "^7.4.2"
     },
     "nanocommit": {

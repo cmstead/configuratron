@@ -29,7 +29,7 @@ function configReader(fs) {
             : filePathOption.parser;
     }
 
-    function normalizeFileOption(fileOption) {
+    function normalizePathOption(fileOption) {
         return {
             path: getFilePathFromOption(fileOption),
             parser: getConfigParser(fileOption)
@@ -48,12 +48,12 @@ function configReader(fs) {
             : null;
     }
 
-    function normalizeFilePathOptions(filePaths) {
-        return filePaths.map(normalizeFileOption);
+    function normalizePathOptions(filePaths) {
+        return filePaths.map(normalizePathOption);
     }
 
     function getConfigurationPathOption(filePaths) {
-        let normalizedPathOptions = normalizeFilePathOptions(filePaths);
+        let normalizedPathOptions = normalizePathOptions(filePaths);
         let lastPathOption = null;
 
         for (let i = 0; i < normalizedPathOptions.length; i++) {
