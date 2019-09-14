@@ -44,12 +44,11 @@ function configReader(fs) {
     }
 
     function getConfigurationString(filePaths) {
-        let configurationString = null;
         let filePathsCopy = filePaths.slice(0);
         let currentFilePathOption;
         let currentFilePath;
 
-        while (configurationString === null && filePathsCopy.length > 0) {
+        while (filePathsCopy.length > 0) {
             currentFilePathOption = filePathsCopy.shift();
             currentFilePath = getFilePathFromOption(currentFilePathOption);
             
@@ -59,7 +58,7 @@ function configReader(fs) {
             }
         }
         
-        configurationString = readFileOrNull(currentFilePath);
+        const configurationString = readFileOrNull(currentFilePath);
 
         return parseConfiguration(currentFilePathOption, configurationString);
     }
