@@ -22,8 +22,10 @@ function configReader(
         return fs.existsSync(pathOption.path);
     }
 
-    function getLastPathOption(fileExists, lastPathOption, pathOption) {
-        return fileExists && lastPathOption === null
+    function getLastPathOption(lastPathOption, pathOption) {
+        const fileExists = doesFileExist(pathOption);
+
+        return fileExists
             ? pathOption
             : lastPathOption;
     }
@@ -33,11 +35,10 @@ function configReader(
 
         for (let i = 0; i < pathOptions.length; i++) {
             const pathOption = pathOptions[i];
-            const fileExists = doesFileExist(pathOption);
 
-            lastPathOption = getLastPathOption(fileExists, lastPathOption, pathOption);
+            lastPathOption = getLastPathOption(lastPathOption, pathOption);
 
-            if (fileExists) {
+            if (lastPathOption !== null) {
                 break;
             }
         }
