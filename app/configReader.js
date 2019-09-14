@@ -27,23 +27,41 @@ function configReader(fs) {
             : filePathOption.parser;
     }
 
-    function getConfigurationString(filePaths) {
-        let configurationString = null;
-        let filePathsCopy = filePaths.slice(0);
-        let currentFilePathOption;
-
-        while (configurationString === null && filePathsCopy.length > 0) {
-            currentFilePathOption = filePathsCopy.shift();
-            const currentFilePath = getFilePathFromOption(currentFilePathOption);
-
-            configurationString = readFileOrNull(currentFilePath);
-        }
-
+    function parseConfiguration(currentFilePathOption, configurationString) {
         const parse = getConfigParser(currentFilePathOption);
 
         return typeof configurationString === 'string'
             ? parse(configurationString)
             : null;
+    }
+
+    function statFile(filePath) {
+        try{
+            return fs.lstat(filePath).isFile()
+        } catch(e) {
+            return false;
+        }
+    }
+
+    function getConfigurationString(filePaths) {
+        let configurationString = null;
+        let filePathsCopy = filePaths.slice(0);
+        let currentFilePathOption;
+        let currentFilePath;
+
+        while (configurationString === null && filePathsCopy.length > 0) {
+            currentFilePathOption = filePathsCopy.shift();
+            currentFilePath = getFilePathFromOption(currentFilePathOption);
+            
+            
+            if(fs.existsSync(currentFilePath)) {
+                break;
+            }
+        }
+        
+        configurationString = readFileOrNull(currentFilePath);
+
+        return parseConfiguration(currentFilePathOption, configurationString);
     }
 
     function read(filePaths) {

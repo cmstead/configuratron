@@ -16,7 +16,9 @@ describe("Config Reader", function () {
     beforeEach(function () {
         childContainer = container.new();
 
-        fakeFs = {};
+        fakeFs = {
+            existsSync: () => true
+        };
 
         childContainer.register(() => fakeFs, 'fs');
         configReader = childContainer.build('configReader');
@@ -41,18 +43,20 @@ describe("Config Reader", function () {
         const expectedConfig = { test: 'config' };
         const filePaths = ['myconfig.json', 'backupConfig.json'];
 
-        fakeFs.readFileSync = sinon.spy(function (filePath) {
-            if (filePath === filePaths[0]) {
-                throw new Error('Boom!');
-            } else {
-                return JSON.stringify(expectedConfig);
-            }
+        fakeFs.existsSync = sinon.spy(function (filePath) {
+            return filePath !== filePaths[0]
+        });
+
+        fakeFs.readFileSync = sinon.spy(function () {
+            return JSON.stringify(expectedConfig);
         });
 
         configReader.read(filePaths);
 
-        assert.equal(fakeFs.readFileSync.getCall(0).args[0], filePaths[0]);
-        assert.equal(fakeFs.readFileSync.getCall(1).args[0], filePaths[1]);
+        assert.equal(fakeFs.existsSync.getCall(0).args[0], filePaths[0]);
+        assert.equal(fakeFs.existsSync.getCall(1).args[0], filePaths[1]);
+
+        assert.equal(fakeFs.readFileSync.getCall(0).args[0], filePaths[1]);
     });
 
     it('supports file path object', function () {
