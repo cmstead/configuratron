@@ -9,7 +9,7 @@ function configReader(
     const { isNull } = typeHelper;
     const { locatePathOption } = configLocator;
     const { normalizePathOptions } = pathOptionNormalizer;
-    const { readAndParseConfiguration } = configParser;
+    const { parseConfiguration } = configParser;
     const { readConfigFile } = configFileReader;
 
     function getPathOption(filePaths) {
@@ -20,7 +20,7 @@ function configReader(
     function read(filePaths) {
         const pathOption = getPathOption(filePaths);
         const configString = readConfigFile(pathOption);
-        const configurationData = readAndParseConfiguration(configString, pathOption);
+        const configurationData = parseConfiguration(configString, pathOption);
         const configurationWasRead = !isNull(configurationData);
 
         return configurationWasRead ? configurationData : {};
