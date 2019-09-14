@@ -18,15 +18,26 @@ function configReader(
             : null;
     }
 
-    function getConfigurationPathOption(filePaths) {
-        let normalizedPathOptions = pathOptionNormalizer.normalizePathOptions(filePaths);
+    function doesFileExist(pathOption) {
+        return fs.existsSync(pathOption.path);
+    }
+
+    function getLastPathOption(fileExists, lastPathOption, pathOption) {
+        return fileExists && lastPathOption === null
+            ? pathOption
+            : lastPathOption;
+    }
+
+    function getConfigurationPathOption(pathOptions) {
         let lastPathOption = null;
 
-        for (let i = 0; i < normalizedPathOptions.length; i++) {
-            const pathOption = normalizedPathOptions[i];
+        for (let i = 0; i < pathOptions.length; i++) {
+            const pathOption = pathOptions[i];
+            const fileExists = doesFileExist(pathOption);
 
-            if (fs.existsSync(pathOption.path)) {
-                lastPathOption = pathOption;
+            lastPathOption = getLastPathOption(fileExists, lastPathOption, pathOption);
+
+            if (fileExists) {
                 break;
             }
         }
@@ -34,11 +45,17 @@ function configReader(
         return lastPathOption;
     }
 
-    function getConfigurationString(filePaths) {
-        const pathOption = getConfigurationPathOption(filePaths);
-        const configurationString = readConfigFile(pathOption);
+    function readAndParseConfiguration(pathOption) {
+        const configString = readConfigFile(pathOption);
 
-        return parseConfiguration(pathOption, configurationString);
+        return parseConfiguration(pathOption, configString);
+    }
+
+    function getConfigurationString(filePaths) {
+        const pathOptions = pathOptionNormalizer.normalizePathOptions(filePaths);
+        const pathOption = getConfigurationPathOption(pathOptions);
+
+        return readAndParseConfiguration(pathOption);
     }
 
     function read(filePaths) {
