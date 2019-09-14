@@ -5,6 +5,7 @@ function configReader(
 ) {
 
     const { isString, isNull } = typeHelper;
+    const { normalizePathOptions } = pathOptionNormalizer;
 
     function readConfigFileFromDisk(fs, pathOption) {
         try {
@@ -53,7 +54,7 @@ function configReader(
     }
 
     function getConfigurationString(filePaths) {
-        const pathOptions = pathOptionNormalizer.normalizePathOptions(filePaths);
+        const pathOptions = normalizePathOptions(filePaths);
         const pathOption = getConfigurationPathOption(pathOptions);
 
         return readAndParseConfiguration(pathOption);
