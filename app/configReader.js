@@ -1,17 +1,23 @@
 function configReader(fs) {
 
-    function readFileOrNull(filePath) {
-        return fs.readFileSync(filePath, { encoding: 'utf8' });
+    function isTypeOf(typeString) {
+        return function (value) {
+            return typeof value === typeString;
+        }
+    }
+
+    const isString = isTypeOf('string');
+    const isFunction = isTypeOf('function');
+
+
+    function defaultParser(configString) {
+        return JSON.parse(configString);
     }
 
     function getFilePathFromOption(currentFilePathOption) {
         return isString(currentFilePathOption)
             ? currentFilePathOption
             : currentFilePathOption.path;
-    }
-
-    function defaultParser(configString) {
-        return JSON.parse(configString);
     }
 
     function getConfigParser(filePathOption) {
@@ -23,12 +29,6 @@ function configReader(fs) {
             : filePathOption.parser;
     }
 
-    function parseConfiguration(pathOption, configurationString) {
-        const parse = pathOption.parser;
-
-        return parse(configurationString);
-    }
-
     function normalizeFileOption(fileOption) {
         return {
             path: getFilePathFromOption(fileOption),
@@ -36,31 +36,36 @@ function configReader(fs) {
         };
     }
 
-    function isType(typeString) {
-        return function (value) {
-            return typeof value === typeString;
-        }
+    function readConfigFile(filePath) {
+        return fs.readFileSync(filePath, { encoding: 'utf8' });
     }
 
-    const isString = isType('string');
-    const isFunction = isType('function');
+    function parseConfiguration(pathOption, configurationString) {
+        return pathOption.parser(configurationString);
+    }
 
-    function getConfigurationString(filePaths) {
+    function getConfigurationPathOption(filePaths) {
         let normalizedPathOptions = filePaths.map(normalizeFileOption);
         let lastPathOption;
 
         while (normalizedPathOptions.length > 0) {
-            lastPathOption = normalizedPathOptions.shift();
+            const pathOption = normalizedPathOptions.shift();
 
-            if (fs.existsSync(lastPathOption.path)) {
+            if (fs.existsSync(pathOption.path)) {
+                lastPathOption = pathOption;
                 break;
             }
         }
 
-        const configurationString = readFileOrNull(lastPathOption.path);
+        return lastPathOption;
+    }
+
+    function getConfigurationString(filePaths) {
+        const pathOption = getConfigurationPathOption(filePaths);
+        const configurationString = readConfigFile(pathOption.path);
 
         return isString(configurationString)
-            ? parseConfiguration(lastPathOption, configurationString)
+            ? parseConfiguration(pathOption, configurationString)
             : null;
     }
 
