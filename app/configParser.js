@@ -7,7 +7,7 @@ function configParser(
     function parseConfiguration(configString, pathOption) {
         return isString(configString)
             ? pathOption.parser(configString)
-            : null;
+            : {};
     }
 
     return {
