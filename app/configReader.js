@@ -31,21 +31,17 @@ function configReader(
     }
 
     function getLastPathOption(lastPathOption, pathOption) {
-        return doesFileExist(pathOption) ? pathOption : lastPathOption;
+        return isNull(lastPathOption) && doesFileExist(pathOption)
+            ? pathOption
+            : lastPathOption;
     }
 
     function getConfigurationPathOption(pathOptions) {
         let lastPathOption = null;
 
-        for (let i = 0; i < pathOptions.length; i++) {
-            const pathOption = pathOptions[i];
-
+        pathOptions.forEach(function (pathOption) {
             lastPathOption = getLastPathOption(lastPathOption, pathOption);
-
-            if (!isNull(lastPathOption)) {
-                break;
-            }
-        }
+        });
 
         return lastPathOption;
     }
