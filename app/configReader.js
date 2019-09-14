@@ -4,10 +4,10 @@ function configReader(
     typeHelper
 ) {
 
-    const { isString } = typeHelper;
+    const { isString, isNull } = typeHelper;
 
     function readConfigFile(pathOption) {
-        return pathOption !== null
+        return !isNull(pathOption)
             ? fs.readFileSync(pathOption.path, { encoding: 'utf8' })
             : null;
     }
@@ -34,7 +34,7 @@ function configReader(
 
             lastPathOption = getLastPathOption(lastPathOption, pathOption);
 
-            if (lastPathOption !== null) {
+            if (!isNull(lastPathOption)) {
                 break;
             }
         }
@@ -57,7 +57,7 @@ function configReader(
 
     function read(filePaths) {
         const configurationData = getConfigurationString(filePaths);
-        const configurationWasRead = configurationData !== null;
+        const configurationWasRead = !isNull(configurationData);
 
         return configurationWasRead ? configurationData : {};
     }

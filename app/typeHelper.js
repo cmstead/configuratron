@@ -9,8 +9,13 @@ function typeHelper () {
     const isString = isTypeOf('string');
     const isFunction = isTypeOf('function');
 
+    function isNull(value) {
+        return value === null;
+    }
+
     return {
         isFunction,
+        isNull,
         isString,
         isTypeOf
     };
