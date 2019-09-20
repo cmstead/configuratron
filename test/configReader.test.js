@@ -7,7 +7,7 @@ chai.use(chaiVerify);
 
 const { assert } = chai;
 
-describe("Read Config", function () {
+describe.only("Read Config", function () {
 
     let childContainer;
     let configuratronFactory;
@@ -48,7 +48,7 @@ describe("Read Config", function () {
         configuratronFactory = childContainer.build('configuratronFactory');
     });
 
-    it.only('reads a config from the filesystem', function () {
+    it('reads a config from the filesystem', function () {
         const configuratron = configuratronFactory.buildConfiguratron(configuratronOptions);
 
         const expectedConfig = { test: 'config' };
@@ -57,7 +57,7 @@ describe("Read Config", function () {
             configuratronOptions.filePath
         )
 
-        fakeFs.readFileSync = sinon.stub().callsFake(() => {
+        fakeFs.readFileSync = sinon.spy(() => {
             return JSON.stringify(expectedConfig);
         });
 
@@ -73,22 +73,24 @@ describe("Read Config", function () {
         assert.verify(capturedConfig, expectedConfig);
     });
 
-    it('supports optional source parser', function () {
-        const expectedConfig = { test: 'config' };
-        const filePaths = [{
-            path: 'myconfig.json',
-            parser: function (configString) {
-                const config = JSON.parse(configString);
+    it.only('supports optional source parser', function () {
+        function parser(configString) {
+            const config = JSON.parse(configString);
 
-                return config.test;
-            }
-        }];
+            return config.test;
+        }
+
+        configuratronOptions.parser = parser;
+        const configuratron = configuratronFactory.buildConfiguratron(configuratronOptions);
+
+        const expectedConfig = { test: 'config' };
+
 
         fakeFs.readFileSync = sinon.spy(function (filePath) {
             return JSON.stringify(expectedConfig);
         });
 
-        const configData = configReader.read(filePaths);
+        const configData = configuratron.readConfig();
 
         assert.equal(configData, expectedConfig.test);
     });
