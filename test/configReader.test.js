@@ -7,7 +7,7 @@ chai.use(chaiVerify);
 
 const { assert } = chai;
 
-describe.only("Read Config", function () {
+describe("Read Config", function () {
 
     let childContainer;
     let configuratronFactory;

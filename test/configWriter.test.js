@@ -7,14 +7,22 @@ chai.use(chaiVerify);
 
 const { assert } = chai;
 
-describe("Config Writer", function () {
+describe.only("Write Configuration", function () {
     let childContainer;
-    let configWriterFactory;
+    let configuratronFactory;
+    let configuratronOptions;
     let fakeFs;
     let fakePath;
 
     beforeEach(function () {
         childContainer = container.new();
+
+        configuratronOptions = {
+            basePath: '/path/to/config/',
+            defaultConfig: {},
+            filePath: './myconfig.json'
+        };
+
 
         fakeFs = {
             existsSync: () => true,
@@ -33,21 +41,25 @@ describe("Config Writer", function () {
         childContainer.register(() => fakePath, 'path');
         childContainer.register(() => fakeProcess, 'process');
 
-        configWriterFactory = childContainer.build('configWriterFactory');
+        configuratronFactory = childContainer.build('configuratronFactory');
     });
 
     describe("writeConfig", function () {
 
         it('writes a file a path joined to a base path', function () {
-            const basePath = '/path/to/config/';
-            const configWriter = configWriterFactory.buildConfigWriter(basePath);
+            const basePath = configuratronOptions.basePath;
+            const filePath = configuratronOptions.filePath;
 
-            const pathToFile = './myConfig.json';
+            configuratronOptions.serializer = value => value;
+            const configuratron = configuratronFactory
+                .buildConfiguratron(configuratronOptions);
+
             const fileContent = 'this is data';
+            configuratron.setConfig(fileContent);
 
-            configWriter.writeConfig(pathToFile, fileContent);
-            
-            const expectedWritePath = fakePath.join(basePath, pathToFile);
+            configuratron.writeConfig();
+
+            const expectedWritePath = fakePath.join(basePath, filePath);
             const actualWritePath = fakeFs.writeFileSync.getCall(0).args[0];
             const actualFileContent = fakeFs.writeFileSync.getCall(0).args[1];
 
@@ -56,22 +68,25 @@ describe("Config Writer", function () {
         });
 
         it('accepts an optional serializer function', function () {
-            const basePath = '/path/to/config/';
-            const configWriter = configWriterFactory.buildConfigWriter(basePath);
+            const basePath = configuratronOptions.basePath;
+            const filePath = configuratronOptions.filePath;
+            const serializer = (data) => JSON.stringify(data) + 'foo';
 
-            const pathToFile = './myConfig.json';
+            configuratronOptions.serializer = serializer;
+            const configuratron = configuratronFactory
+                .buildConfiguratron(configuratronOptions);
+
             const fileContent = ['this is data'];
+            configuratron.setConfig(fileContent);
 
-            const serializer = (data) => JSON.stringify(data);
+            configuratron.writeConfig();
 
-            configWriter.writeConfig(pathToFile, fileContent, serializer);
-
-            const expectedContent = JSON.stringify(fileContent);
+            const expectedContent = JSON.stringify(fileContent) + 'foo';
             const actualContent = fakeFs.writeFileSync.getCall(0).args[1];
 
             assert.equal(actualContent, expectedContent);
         });
-        
+
     });
 
 });
