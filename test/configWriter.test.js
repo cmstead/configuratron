@@ -68,8 +68,6 @@ describe.only("Write Configuration", function () {
         });
 
         it('accepts an optional serializer function', function () {
-            const basePath = configuratronOptions.basePath;
-            const filePath = configuratronOptions.filePath;
             const serializer = (data) => JSON.stringify(data) + 'foo';
 
             configuratronOptions.serializer = serializer;
