@@ -73,7 +73,7 @@ describe.only("Read Config", function () {
         assert.verify(capturedConfig, expectedConfig);
     });
 
-    it.only('supports optional source parser', function () {
+    it('supports optional source parser', function () {
         function parser(configString) {
             const config = JSON.parse(configString);
 
@@ -96,12 +96,12 @@ describe.only("Read Config", function () {
     });
 
     it('returns an empty object when a config file cannot be read', function () {
-        const filePaths = ['myconfig.json', 'backupConfig.json'];
+        const configuratron = configuratronFactory.buildConfiguratron(configuratronOptions);
 
         fakeFs.existsSync = () => false;
         fakeFs.readFileSync = () => null;
 
-        const returnedConfig = configReader.read(filePaths);
+        const returnedConfig = configuratron.readConfig();
 
         assert.verify(returnedConfig, {});
     });
