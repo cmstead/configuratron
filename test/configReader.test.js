@@ -14,6 +14,7 @@ describe.only("Read Config", function () {
     let configuratronOptions;
     let fakeFs;
     let fakePath;
+    let fakeLogger;
 
     beforeEach(function () {
         childContainer = container.new();
@@ -28,6 +29,10 @@ describe.only("Read Config", function () {
             existsSync: () => true
         };
 
+        fakeLogger = {
+            log: sinon.stub()
+        };
+
         fakePath = {
             join: (...args) => args.join('{fakeJoin}')
         }
@@ -37,6 +42,7 @@ describe.only("Read Config", function () {
         };
 
         childContainer.register(() => fakeFs, 'fs');
+        childContainer.register(() => fakeLogger, 'logger');
         childContainer.register(() => fakePath, 'path');
         childContainer.register(() => fakeProcess, 'process');
 
@@ -100,14 +106,20 @@ describe.only("Read Config", function () {
         assert.verify(returnedConfig, {});
     });
 
-    it('returns an empty object when readFileSync throws an error', function () {
+    it('warns user when config cannot be read', function () {
         const configuratron = configuratronFactory.buildConfiguratron(configuratronOptions);
 
         fakeFs.readFileSync = () => { throw new Error('Oh noes!'); };
 
-        const returnedConfig = configuratron.readConfig();
+        configuratron.readConfig();
 
-        assert.verify(returnedConfig, {});
+        const expectedError = 'An error occurred while reading' +
+        'config file: Oh noes!' +
+        '\nUsing default configuration.'
+
+        const actualError = fakeLogger.log.getCall(0).args[0];
+
+        assert.equal(actualError, expectedError);
     });
 
 });

@@ -1,17 +1,26 @@
 function configReaderFactory(
     fs,
+    logger,
     path
 ) {
 
     function buildConfigReader(basePath) {
+
+        function displayConfigReadError(error) {
+            logger.log(
+                'An error occurred while reading' +
+                'config file: ' + error.message +
+                '\nUsing default configuration.'
+            );
+        }
+
         function readConfig(filePath) {
             const readPath = path.join(basePath, filePath);
 
-            try{
+            try {
                 return fs.readFileSync(readPath, { encoding: 'utf8' });
-            } catch (e) {
-                // console.log('An error occurred while reading config file: ', e.message);
-                // console.log('Using default configuration.');
+            } catch (error) {
+                displayConfigReadError(error);
 
                 return {};
             }
