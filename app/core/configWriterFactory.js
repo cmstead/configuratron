@@ -1,20 +1,18 @@
 function configWriterFactory(
     fs,
-    path,
-    process
+    path
 ) {
 
     function buildConfigWriter(basePath) {
-        const defaultSerializer = (content) => content;
-
-        function writeConfig(filePath, fileContent, serialize = defaultSerializer) {
+        function writeConfig(filePath, fileContent) {
             const writePath = path.join(basePath, filePath);
-            fs.writeFileSync(writePath, serialize(fileContent));
+
+            fs.writeFileSync(writePath, fileContent);
         }
-    
+
         return {
             writeConfig
-        };    
+        };
     }
 
     return {

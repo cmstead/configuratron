@@ -2,94 +2,75 @@ const chai = require('chai');
 const chaiVerify = require('chai-verify');
 const container = require('../container');
 const sinon = require('sinon');
-const path = require('path');
 
 chai.use(chaiVerify);
 
 const { assert } = chai;
 
-describe("Config Reader", function () {
+describe("Read Config", function () {
 
     let childContainer;
-    let configReader;
+    let configuratronFactory;
+    let configuratronOptions;
     let fakeFs;
+    let fakePath;
+    let returnValues;
 
     beforeEach(function () {
         childContainer = container.new();
 
+        returnValues = {
+            readFileSync: ''
+        };
+
+        configuratronOptions = {
+            basePath: '/base/path/',
+            defaultConfig: {},
+            filePath: 'myconfig.json'
+        };
+
         fakeFs = {
             existsSync: () => true
         };
+
+        fakePath = {
+            join: (...args) => args.join('{fakeJoin}')
+        }
 
         fakeProcess = {
             cwd: () => '',
         };
 
         childContainer.register(() => fakeFs, 'fs');
+        childContainer.register(() => fakePath, 'path');
         childContainer.register(() => fakeProcess, 'process');
 
-        configReader = childContainer.build('configReader');
+        configuratronFactory = childContainer.build('configuratronFactory');
     });
 
-    it('reads a config from the filesystem', function () {
+    it.only('reads a config from the filesystem', function () {
+        const configuratron = configuratronFactory.buildConfiguratron(configuratronOptions);
+
         const expectedConfig = { test: 'config' };
-        const filePaths = ['myconfig.json'];
+        const expectedPath = fakePath.join(
+            configuratronOptions.basePath,
+            configuratronOptions.filePath
+        )
 
-        fakeFs.readFileSync = sinon.spy(() => JSON.stringify(expectedConfig));
+        fakeFs.readFileSync = sinon.stub().callsFake(() => {
+            return JSON.stringify(expectedConfig);
+        });
 
-        const capturedConfig = configReader.read(filePaths);
+        const capturedConfig = configuratron.readConfig();
 
-        // Ensuring call is correct and encoding isn't forgotten
-        assert.equal(fakeFs.readFileSync.getCall(0).args[0], filePaths[0]);
-        assert.equal(fakeFs.readFileSync.getCall(0).args[1].encoding, 'utf8');
+        function ensureCallIsCorrectAndEncodingIsNotForgotten() {
+            assert.equal(fakeFs.readFileSync.getCall(0).args[0], expectedPath);
+            assert.equal(fakeFs.readFileSync.getCall(0).args[1].encoding, 'utf8');
+        }
+
+        ensureCallIsCorrectAndEncodingIsNotForgotten();
 
         assert.verify(capturedConfig, expectedConfig);
-    });
-
-    it('add current working directory to path for reading', function () {
-        const expectedConfig = { test: 'config' };
-        const filePaths = ['myconfig.json'];
-
-        fakeFs.readFileSync = sinon.spy(() => JSON.stringify(expectedConfig));
-        fakeProcess.cwd = () => 'foo';
-
-        configReader.read(filePaths);
-
-        const expectedPath = path.join(fakeProcess.cwd(), filePaths[0]);
-        assert.equal(fakeFs.readFileSync.getCall(0).args[0], expectedPath);
-    });
-
-    it('reads next file path in paths array if first fails', function () {
-        const expectedConfig = { test: 'config' };
-        const filePaths = ['myconfig.json', 'backupConfig.json'];
-
-        fakeFs.existsSync = sinon.spy(function (filePath) {
-            return filePath !== filePaths[0]
-        });
-
-        fakeFs.readFileSync = sinon.spy(function () {
-            return JSON.stringify(expectedConfig);
-        });
-
-        configReader.read(filePaths);
-
-        assert.equal(fakeFs.existsSync.getCall(0).args[0], filePaths[0]);
-        assert.equal(fakeFs.existsSync.getCall(1).args[0], filePaths[1]);
-
-        assert.equal(fakeFs.readFileSync.getCall(0).args[0], filePaths[1]);
-    });
-
-    it('supports file path object', function () {
-        const expectedConfig = { test: 'config' };
-        const filePaths = [{ path: 'myconfig.json' }];
-
-        fakeFs.readFileSync = sinon.spy(function (filePath) {
-            return JSON.stringify(expectedConfig);
-        });
-
-        configReader.read(filePaths);
-
-        assert.equal(fakeFs.readFileSync.getCall(0).args[0], filePaths[0].path);
     });
 
     it('supports optional source parser', function () {
@@ -117,17 +98,6 @@ describe("Config Reader", function () {
 
         fakeFs.existsSync = () => false;
         fakeFs.readFileSync = () => null;
-
-        const returnedConfig = configReader.read(filePaths);
-
-        assert.verify(returnedConfig, {});
-    });
-
-    it('returns an empty object when config read throws an error', function () {
-        const filePaths = ['myconfig.json', 'backupConfig.json'];
-
-        fakeFs.existsSync = () => true;
-        fakeFs.readFileSync = () => { throw new Error('Blammo!'); };
 
         const returnedConfig = configReader.read(filePaths);
 

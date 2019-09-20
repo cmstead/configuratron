@@ -8,6 +8,7 @@ function typeHelper () {
 
     const isString = isTypeOf('string');
     const isFunction = isTypeOf('function');
+    const isUndefined = isTypeOf('undefined');
 
     function isNull(value) {
         return value === null;
@@ -17,7 +18,8 @@ function typeHelper () {
         isFunction,
         isNull,
         isString,
-        isTypeOf
+        isTypeOf,
+        isUndefined
     };
 }
 
