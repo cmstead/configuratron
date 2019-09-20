@@ -45,15 +45,31 @@ describe("Config Writer", function () {
             const pathToFile = './myConfig.json';
             const fileContent = 'this is data';
 
-            const expectedWritePath = fakePath.join(basePath, pathToFile);
-
             configWriter.writeConfig(pathToFile, fileContent);
-
+            
+            const expectedWritePath = fakePath.join(basePath, pathToFile);
             const actualWritePath = fakeFs.writeFileSync.getCall(0).args[0];
             const actualFileContent = fakeFs.writeFileSync.getCall(0).args[1];
 
             assert.equal(actualWritePath, expectedWritePath);
             assert.equal(actualFileContent, fileContent);
+        });
+
+        it('accepts an optional serializer function', function () {
+            const basePath = '/path/to/config/';
+            const configWriter = configWriterFactory.buildConfigWriter(basePath);
+
+            const pathToFile = './myConfig.json';
+            const fileContent = ['this is data'];
+
+            const serializer = (data) => JSON.stringify(data);
+
+            configWriter.writeConfig(pathToFile, fileContent, serializer);
+
+            const expectedContent = JSON.stringify(fileContent);
+            const actualContent = fakeFs.writeFileSync.getCall(0).args[1];
+
+            assert.equal(actualContent, expectedContent);
         });
         
     });
