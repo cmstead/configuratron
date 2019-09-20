@@ -14,14 +14,9 @@ describe.only("Read Config", function () {
     let configuratronOptions;
     let fakeFs;
     let fakePath;
-    let returnValues;
 
     beforeEach(function () {
         childContainer = container.new();
-
-        returnValues = {
-            readFileSync: ''
-        };
 
         configuratronOptions = {
             basePath: '/base/path/',
@@ -98,8 +93,17 @@ describe.only("Read Config", function () {
     it('returns an empty object when a config file cannot be read', function () {
         const configuratron = configuratronFactory.buildConfiguratron(configuratronOptions);
 
-        fakeFs.existsSync = () => false;
         fakeFs.readFileSync = () => null;
+
+        const returnedConfig = configuratron.readConfig();
+
+        assert.verify(returnedConfig, {});
+    });
+
+    it('returns an empty object when readFileSync throws an error', function () {
+        const configuratron = configuratronFactory.buildConfiguratron(configuratronOptions);
+
+        fakeFs.readFileSync = () => { throw new Error('Oh noes!'); };
 
         const returnedConfig = configuratron.readConfig();
 

@@ -7,7 +7,14 @@ function configReaderFactory(
         function readConfig(filePath) {
             const readPath = path.join(basePath, filePath);
 
-            return fs.readFileSync(readPath, { encoding: 'utf8' });
+            try{
+                return fs.readFileSync(readPath, { encoding: 'utf8' });
+            } catch (e) {
+                // console.log('An error occurred while reading config file: ', e.message);
+                // console.log('Using default configuration.');
+
+                return {};
+            }
         }
 
         return {
