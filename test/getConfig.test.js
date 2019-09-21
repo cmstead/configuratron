@@ -78,4 +78,17 @@ describe("Get Config", function () {
         assert.equal(JSON.stringify(config), JSON.stringify(expectedConfig));
     });
 
+    it('returns config from memory when it exists', function () {
+        const configuratron = configuratronFactory.buildConfiguratron(configuratronOptions);
+
+        const expectedConfig = { fromFileSystem: false }
+
+        fakeFs.readFileSync = () => JSON.stringify({ fromFileSystem: true });
+
+        configuratron.setConfig(expectedConfig);
+        const config = configuratron.getConfig();
+
+        assert.equal(JSON.stringify(config), JSON.stringify(expectedConfig));
+    });
+
 });
