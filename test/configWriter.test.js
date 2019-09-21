@@ -7,7 +7,7 @@ chai.use(chaiVerify);
 
 const { assert } = chai;
 
-describe.only("Write Configuration", function () {
+describe("Write Configuration", function () {
     let childContainer;
     let configuratronFactory;
     let configuratronOptions;
