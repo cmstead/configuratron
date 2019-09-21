@@ -1,4 +1,5 @@
 function configuratronFactory(
+    configLocator,
     configParserFactory,
     configReaderFactory,
     configSerializerFactory,
@@ -62,7 +63,8 @@ function configuratronFactory(
     }
 
     return {
-        buildConfiguratron
+        findReadPath: configLocator.findReadPath,
+        buildConfiguratron: buildConfiguratron
     };
 
 }
