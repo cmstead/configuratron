@@ -25,15 +25,12 @@ function configuratronFactory(
             const configString = configReader.readConfig(filePath);
             const parsedConfig = configParser.parseConfiguration(configString);
 
-            const currentConfig = configSettingsService
+            return configSettingsService
                 .mergeConfigSettings(parsedConfig, defaultConfig);
-
-            return currentConfig;
         }
 
         function getConfig() {
             if (currentConfig === null) {
-                console.log('Current config is null');
                 currentConfig = readConfig();
             }
 
@@ -47,7 +44,7 @@ function configuratronFactory(
         function writeConfig() {
             const serializedConfig = configSerializer
                 .serializeConfiguration(currentConfig);
-            
+
             configWriter.writeConfig(filePath, serializedConfig);
         }
 
