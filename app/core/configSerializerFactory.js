@@ -1,8 +1,7 @@
 function configSerializerFactory () {
     
-    const defaultSerializer = value => value;
 
-    function buildConfigurationSerializer(serialize = defaultSerializer) {
+    function buildConfigurationSerializer(serialize) {
 
         function serializeConfiguration(configuration) {
             return serialize(configuration);

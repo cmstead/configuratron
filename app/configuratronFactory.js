@@ -6,11 +6,14 @@ function configuratronFactory(
     configWriterFactory
 ) {
 
+    const defaultSerializer = value => JSON.stringify(value);
+    const defaultParser = (value) => JSON.parse(value);
+
     function buildConfiguratron({
         basePath = process.cwd(),
         filePath,
-        serializer,
-        parser,
+        serializer = defaultSerializer,
+        parser = defaultParser,
         defaultConfig = {}
     }) {
 

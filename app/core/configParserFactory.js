@@ -4,11 +4,7 @@ function configParserFactory(
 
     const { isString } = typeHelper;
 
-    function defaultParser (value) {
-        return JSON.parse(value);
-    }
-
-    function buildConfigParser(parse = defaultParser) {
+    function buildConfigParser(parse) {
 
         function parseConfiguration(configurationValue) {
             return isString(configurationValue)
