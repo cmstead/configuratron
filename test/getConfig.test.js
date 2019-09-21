@@ -91,4 +91,19 @@ describe("Get Config", function () {
         assert.equal(JSON.stringify(config), JSON.stringify(expectedConfig));
     });
 
+    it('properly stores config when read from fs', function () {
+        const configuratron = configuratronFactory.buildConfiguratron(configuratronOptions);
+
+        const expectedConfig = { fromFileSystem: true }
+
+        fakeFs.readFileSync = () => JSON.stringify(expectedConfig);
+        configuratron.getConfig();
+
+        fakeFs.readFileSync = () => JSON.stringify(null);
+
+        const config = configuratron.getConfig();
+
+        assert.equal(JSON.stringify(config), JSON.stringify(expectedConfig));
+    });
+
 });
