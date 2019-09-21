@@ -66,4 +66,16 @@ describe("Get Config", function () {
         assert.equal(fakeFs.readFileSync.callCount, 0);
     });
 
+    it('returns config from filesystem when it exists', function () {
+        const configuratron = configuratronFactory.buildConfiguratron(configuratronOptions);
+
+        const expectedConfig = { fromFileSystem: true }
+
+        fakeFs.readFileSync = () => JSON.stringify(expectedConfig);
+
+        const config = configuratron.getConfig();
+
+        assert.equal(JSON.stringify(config), JSON.stringify(expectedConfig));
+    });
+
 });

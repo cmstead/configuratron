@@ -34,7 +34,7 @@ function configuratronFactory(
         function getConfig() {
             if (currentConfig === null) {
                 console.log('Current config is null');
-                readConfig();
+                currentConfig = readConfig();
             }
 
             return currentConfig;
