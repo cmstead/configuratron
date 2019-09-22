@@ -7,7 +7,7 @@ function configuratronFactory(
     configWriterFactory
 ) {
 
-    const defaultSerializer = value => JSON.stringify(value);
+    const defaultSerializer = value => JSON.stringify(value, null, 4);
     const defaultParser = (value) => JSON.parse(value);
 
     function buildConfiguratron({
