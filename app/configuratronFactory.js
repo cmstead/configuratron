@@ -24,9 +24,10 @@ function configuratronFactory(
         const configSerializer = configSerializerFactory.buildConfigSerializer(serializer);
 
         let currentConfig = null;
+        let currentFilePath = filePath;
 
         function readConfig() {
-            const configString = configReader.readConfig(filePath);
+            const configString = configReader.readConfig(currentFilePath);
             const parsedConfig = configParser.parseConfiguration(configString);
 
             return configSettingsService
@@ -49,7 +50,11 @@ function configuratronFactory(
             const serializedConfig = configSerializer
                 .serializeConfiguration(currentConfig);
 
-            configWriter.writeConfig(filePath, serializedConfig);
+            configWriter.writeConfig(currentFilePath, serializedConfig);
+        }
+
+        function setFilePath(newPath) {
+            currentFilePath = newPath;
         }
 
         return {
@@ -57,7 +62,9 @@ function configuratronFactory(
             setConfig,
 
             readConfig,
-            writeConfig
+            writeConfig,
+
+            setFilePath
         };
 
     }
