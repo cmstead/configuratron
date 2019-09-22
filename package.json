@@ -1,6 +1,6 @@
 {
     "name": "configuratron",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A configuration read/writer and in-app manager for CLI applications",
     "main": "index.js",
     "scripts": {
